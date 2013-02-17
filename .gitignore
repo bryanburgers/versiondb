@@ -1,0 +1,6 @@
+# Yep, I use Sublime. What of it?
+*.sublime-project
+*.sublime-workspace
+
+# Use npm for node modules
+node_modules

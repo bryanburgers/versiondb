@@ -1,0 +1,23 @@
+{
+	"name": "versiondb",
+	"description": "Tool to version database schemas",
+	"author": "Bryan Burgers <bryan.burgers@gmail.com>",
+	"version": "0.1.0",
+	"repository": {
+		"type" : "git",
+		"url" : "http://github.com/bryanburgers/versiondb.git"
+	},
+	"dependencies": {
+		"async": "~0.1",
+		"pg": "~0.10",
+		"semver": "~1.1"
+	},
+	"engines": {
+		"node": "~0.8",
+		"npm": "~1.1"
+	},
+	"bin": {
+		"versiondb": "./bin/versiondb.js"
+	},
+	"preferGlobal": true
+}
