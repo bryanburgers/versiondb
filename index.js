@@ -110,6 +110,40 @@ function runUpdate(connection, product, version, filename, create, next) {
 	});
 }
 
+function check(connection, callback) {
+	connection.query("SELECT * FROM information_schema.tables WHERE table_schema = 'ver' AND table_name = 'version'", function(err, result) {
+		if (err) {
+			return callback(err);
+		}
+
+		if (result.rowCount === 0) {
+			return callback(null, {
+				exists: false,
+				products: {}
+			});
+		}
+		else {
+			connection.query("SELECT product, version FROM ver.version ORDER BY product, version", function(err, result) {
+				if (err) {
+					return callback(err);
+				}
+
+				var products = {};
+				result.rows.forEach(function(row) {
+					products[row.product] = row.version;
+				});
+
+				return callback(null, {
+					exists: true,
+					products: products
+				});
+			});
+		}
+	});
+}
+
+exports.check = check;
+
 function upgrade(databaseUrl, schemaFile, callback) {
 
 	// Load config file
