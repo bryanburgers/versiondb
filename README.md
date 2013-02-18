@@ -8,10 +8,6 @@ Version DB includes a single table in that target database that tracks which ver
 
 If a product does not exist in the database, all of the scripts will be run on the database to create a schema that is the latest version.
 
-## Use case
-
-A developer, Dave, is developing an application, "Awesome App", that requires a database. When he releases the app, he makes a database create script and versions it `1.0.0`. He sells his app to a few customers and sets up the database for them. He then continues making Awesome App even more awesome. In order to do that, he needs to add a new table, and alter a column of a different table. So, he makes a change script from his original database to the new version, and versions that `1.0.1`. Now, when he has to deal with a database, running Version DB will either create a database at `1.0.1`, or upgrade an existing database from `1.0.0` to `1.0.1`, depending on what's on the database already.
-
 ## Usage
 
 To check what schemas are currently installed on a database
