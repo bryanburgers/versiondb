@@ -8,6 +8,10 @@ Version DB includes a single table in that target database that tracks which ver
 
 If a product does not exist in the database, all of the scripts will be run on the database to create a schema that is the latest version.
 
+## Installation
+
+    npm install -g versiondb
+
 ## Usage
 
 To check what schemas are currently installed on a database
