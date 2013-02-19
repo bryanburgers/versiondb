@@ -63,7 +63,7 @@ function getSchemaVersion(connection, product, next) {
 }
 
 function runUpdate(connection, product, version, filename, create, next) {
-	fs.readFile(path.resolve(rootDir, filename), function(err, data) {
+	fs.readFile(filename, function(err, data) {
 		if (err) {
 			next(err);
 			return;
@@ -235,7 +235,7 @@ function upgrade(databaseUrl, schemaFile, callback) {
 							var create = startIndex === 0;
 
 							async.forEachSeries(updateVersions, function (version, next) {
-								runUpdate(connection, product, version, conf[product][version], create, next);
+								runUpdate(connection, product, version, path.resolve(rootDir, conf[product][version]), create, next);
 								create = false;
 							}, function(err) {
 								if (err) {
