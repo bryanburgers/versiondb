@@ -5,12 +5,14 @@ var currentVersion = require('./package.json').version;
 
 var versiondb = require('./index.js');
 var pg = require('pg');
+var PgConnectionParameters = require('pg/lib/connection-parameters');
 
 var program = require('commander');
 
 program
 	.version(currentVersion)
 	.usage('[options] <database url> [schema file]')
+	.option('-s, --secure', 'Use a secure connection')
 	.parse(process.argv);
 
 var database = program.args[0];
@@ -20,8 +22,13 @@ if (!database) {
 	program.help();
 }
 
+var db = new PgConnectionParameters(database);
+if (program.secure) {
+	db.ssl = program.secure;
+}
+
 if (!file) {
-	pg.connect(database, function(err, connection) {
+	pg.connect(db, function(err, connection) {
 		if (err) {
 			console.log(err.message);
 			process.exit();
@@ -50,7 +57,7 @@ if (!file) {
 	});
 }
 else {
-	versiondb.upgrade(database, file, function() {
+	versiondb.upgrade(db, file, function() {
 		process.exit();
 	});
 }
