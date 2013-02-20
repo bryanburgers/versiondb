@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 "use strict";
 
-var versiondb = require('../index.js');
+var versiondb = require('./index.js');
 var pg = require('pg');
 
 var database = process.argv[2];
