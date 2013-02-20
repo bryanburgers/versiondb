@@ -1,11 +1,24 @@
 #!/usr/bin/env node
 "use strict";
 
+var currentVersion = require('./package.json').version;
+
 var versiondb = require('./index.js');
 var pg = require('pg');
 
-var database = process.argv[2];
-var file = process.argv[3];
+var program = require('commander');
+
+program
+	.version(currentVersion)
+	.usage('[options] <database url> [schema file]')
+	.parse(process.argv);
+
+var database = program.args[0];
+var file = program.args[1];
+
+if (!database) {
+	program.help();
+}
 
 if (!file) {
 	pg.connect(database, function(err, connection) {
