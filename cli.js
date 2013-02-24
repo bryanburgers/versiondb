@@ -30,14 +30,14 @@ if (program.secure) {
 if (!file) {
 	pg.connect(db, function(err, connection) {
 		if (err) {
-			console.log(err.message);
-			process.exit();
+			console.error(err.message);
+			process.exit(1);
 		}
 
 		versiondb.check(connection, function(err, data) {
 			if (err) {
-				console.log(err.message);
-				process.exit();
+				console.error(err.message);
+				process.exit(1);
 			}
 
 			if (data.exists) {
@@ -49,7 +49,10 @@ if (!file) {
 				});
 			}
 			else {
-				console.log("No products");
+				// Not actually an error, but we want to output only the
+				// products and their versions of stdout, so let's output
+				// this on stderr.
+				console.error("No products");
 			}
 
 			process.exit();
