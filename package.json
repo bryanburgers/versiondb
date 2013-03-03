@@ -11,11 +11,22 @@
     "async": "~0.1",
     "commander": "~1.1",
     "pg": "~0.12",
-    "semver": "~1.1"
+    "semver": "~1.1",
+    "versiondb-bundle-file": "~1.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4",
+    "grunt-contrib-jshint": "~0.1.1",
+    "mocha": "~1.7",
+    "should": "~1.2",
+    "versiondb-bundle-memory": "~1.0"
   },
   "engines": {
     "node": "~0.8",
     "npm": "~1.1"
+  },
+  "scripts": {
+    "test": "node checkenv && node node_modules/mocha/bin/mocha"
   },
   "bin": {
     "versiondb": "./cli.js"

@@ -8,6 +8,7 @@ var pg = require('pg');
 var PgConnectionParameters = require('pg/lib/connection-parameters');
 
 var program = require('commander');
+var filebundle = require('versiondb-bundle-file');
 
 program
 	.version(currentVersion)
@@ -60,7 +61,67 @@ if (!file) {
 	});
 }
 else {
-	versiondb.upgrade(db, file, function() {
-		process.exit();
+	filebundle(file, function(err, bundle) {
+		if (err) {
+			console.error(err.message);
+			process.exit(1);
+		}
+
+		pg.connect(db, function(err, connection) {
+			if (err) {
+				console.error(err.message);
+				process.exit(1);
+			}
+
+			var status = versiondb.upgrade(connection, bundle);
+			status.on('error', function(err) {
+				console.error(err.message);
+				process.exit(1);
+			});
+			status.on('plan', function(data) {
+				if (data.success) {
+					if (data.upgradeVersions.length == 0) {
+						console.log(data.product + ' is already up to date');
+					}
+					else {
+						console.log('Updating ' + data.product);
+						if (data.databaseVersion) {
+							console.log('Current version: ' + data.databaseVersion);
+						}
+						else {
+							console.log('No current version');
+						}
+
+						if (data.targetVersion) {
+							console.log('Target version: ' + data.targetVersion);
+						}
+					}
+				}
+				else {
+					console.error('Cannot upgrade ' + data.product);
+					console.error('(' + data.error.message + ')');
+				}
+			});
+			status.on('version', function(data) {
+				if (data.success) {
+					console.log(data.product + '@' + data.version + ': OK');
+				}
+				else {
+					console.error(data.product + '@' + data.version + ': Rolled back (' + data.error.message + ')');
+				}
+			});
+			status.on('product', function(data) {
+				if (data.success) {
+					console.log('Successfully upgraded to: ' + data.product + '@' + data.version);
+				}
+				else {
+					console.log('An upgrade failed. Current version is now: ' + data.product + '@' + data.version);
+				}
+			});
+			status.on('complete', function() {
+				console.log("Done");
+				process.exit();
+			});
+		});
 	});
 }
