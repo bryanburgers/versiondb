@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+  - 0.8
+  - 0.6
+before_script:
+  - psql -c 'create database versiondb;' -U postgres
+env:
+  - DATABASE_URL="postgres://postgres@localhost/versiondb"
