@@ -8,13 +8,13 @@ var semver = require('semver');
 var VersionDBUpgrader = require('./VersionDBUpgrader');
 
 function maybeCreateVersionSchema(connection, callback) {
-	connection.query("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'ver'", function(err, result) {
+	connection.query("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'versiondb'", function(err, result) {
 		if (err) {
 			return callback(err);
 		}
 
 		if (result.rowCount === 0) {
-			connection.query("CREATE SCHEMA ver", function(err) {
+			connection.query("CREATE SCHEMA versiondb", function(err) {
 				if (err) {
 					return callback(err);
 				}
@@ -29,13 +29,13 @@ function maybeCreateVersionSchema(connection, callback) {
 }
 
 function maybeCreateVersionTable(connection, callback) {
-	connection.query("SELECT * FROM information_schema.tables WHERE table_schema = 'ver' AND table_name = 'version'", function(err, result) {
+	connection.query("SELECT * FROM information_schema.tables WHERE table_schema = 'versiondb' AND table_name = 'version'", function(err, result) {
 		if (err) {
 			return callback(err);
 		}
 
 		if (result.rowCount === 0) {
-			connection.query("CREATE TABLE IF NOT EXISTS ver.version ( product varchar(50) PRIMARY KEY, version varchar(8) );", function(err, result) {
+			connection.query("CREATE TABLE IF NOT EXISTS versiondb.version ( product varchar(255) PRIMARY KEY, version varchar(25) );", function(err, result) {
 				if (err) {
 					return callback(err);
 				}
@@ -71,7 +71,7 @@ function createVersionTable(connection, callback) {
 exports.createVersionTable = createVersionTable;
 
 function check(connection, callback) {
-	connection.query("SELECT * FROM information_schema.tables WHERE table_schema = 'ver' AND table_name = 'version'", function(err, result) {
+	connection.query("SELECT * FROM information_schema.tables WHERE table_schema = 'versiondb' AND table_name = 'version'", function(err, result) {
 		if (err) {
 			return callback(err);
 		}
@@ -83,7 +83,7 @@ function check(connection, callback) {
 			});
 		}
 		else {
-			connection.query("SELECT product, version FROM ver.version ORDER BY product, version", function(err, result) {
+			connection.query("SELECT product, version FROM versiondb.version ORDER BY product, version", function(err, result) {
 				if (err) {
 					return callback(err);
 				}

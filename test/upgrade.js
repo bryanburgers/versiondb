@@ -10,7 +10,7 @@ function connect(callback) {
 }
 
 function clear(database, callback) {
-	database.query("DROP SCHEMA ver CASCADE", function(err) {
+	database.query("DROP SCHEMA versiondb CASCADE", function(err) {
 		// We might get an error that it does not exist. That's fine.
 
 		database.query("DROP SCHEMA example CASCADE", function(err) {
@@ -93,7 +93,7 @@ describe('upgrade', function() {
 			});
 
 			status.once('complete', function() {
-				database.query("SELECT version FROM ver.version WHERE product = 'example'", function(err, result) {
+				database.query("SELECT version FROM versiondb.version WHERE product = 'example'", function(err, result) {
 					should.not.exist(err);
 
 					result.rows[0].version.should.eql('1.0.0');
@@ -129,7 +129,7 @@ describe('upgrade', function() {
 			bundle.addUpdateQuery("example", "1.0.0", "CREATE SCHEMA example");
 			bundle.addUpdateQuery("example", "1.0.1", "CREATE SCHEMA other");
 
-			database.query("INSERT INTO ver.version VALUES ('example', '1.0.0')", function(err) {
+			database.query("INSERT INTO versiondb.version VALUES ('example', '1.0.0')", function(err) {
 				should.not.exist(err);
 
 				var status = versiondb.upgrade(database, bundle);
@@ -173,7 +173,7 @@ describe('upgrade', function() {
 					products['example'].should.have.property('targetVersion', '1.0.1');
 					products['example'].should.have.property('success', true);
 
-					database.query("SELECT version FROM ver.version WHERE product = 'example'", function(err, result) {
+					database.query("SELECT version FROM versiondb.version WHERE product = 'example'", function(err, result) {
 						should.not.exist(err);
 
 						// Should be updated
@@ -258,7 +258,7 @@ describe('upgrade', function() {
 				products['other'].should.have.property('targetVersion', '2.0.0');
 				products['other'].should.have.property('success', true);
 
-				database.query("SELECT version FROM ver.version WHERE product = 'example' OR product = 'other' ORDER BY product", function(err, result) {
+				database.query("SELECT version FROM versiondb.version WHERE product = 'example' OR product = 'other' ORDER BY product", function(err, result) {
 					should.not.exist(err);
 
 					result.rows[0].version.should.eql('1.0.0');
@@ -320,7 +320,7 @@ describe('upgrade', function() {
 				products['example'].should.have.property('success', false);
 				products['example'].should.have.property('error');
 
-				database.query("SELECT version FROM ver.version WHERE product = 'example'", function(err, result) {
+				database.query("SELECT version FROM versiondb.version WHERE product = 'example'", function(err, result) {
 					should.not.exist(err);
 
 					result.rowCount.should.eql(0);
@@ -384,7 +384,7 @@ describe('upgrade', function() {
 				products['example'].should.have.property('success', false);
 				products['example'].should.have.property('error');
 
-				database.query("SELECT version FROM ver.version WHERE product = 'example'", function(err, result) {
+				database.query("SELECT version FROM versiondb.version WHERE product = 'example'", function(err, result) {
 					should.not.exist(err);
 
 					result.rows[0].version.should.eql('1.0.0');
@@ -456,7 +456,7 @@ describe('upgrade', function() {
 				products['example'].should.have.property('success', false);
 				products['example'].should.have.property('error');
 
-				database.query("SELECT version FROM ver.version WHERE product = 'example'", function(err, result) {
+				database.query("SELECT version FROM versiondb.version WHERE product = 'example'", function(err, result) {
 					should.not.exist(err);
 
 					result.rows[0].version.should.eql('1.0.0');
@@ -487,7 +487,7 @@ describe('upgrade', function() {
 			var bundle = memorybundle();
 			bundle.addUpdateQuery("example", "1.0.0", "CREATE SCHEMA example");
 
-			database.query("INSERT INTO ver.version VALUES ('example', '0.7.0')", function(err) {
+			database.query("INSERT INTO versiondb.version VALUES ('example', '0.7.0')", function(err) {
 				should.not.exist(err);
 
 				var status = versiondb.upgrade(database, bundle);
@@ -507,7 +507,7 @@ describe('upgrade', function() {
 				});
 
 				status.once('complete', function() {
-					database.query("SELECT version FROM ver.version WHERE product = 'example'", function(err, result) {
+					database.query("SELECT version FROM versiondb.version WHERE product = 'example'", function(err, result) {
 						should.not.exist(err);
 
 						// Should be updated
@@ -547,7 +547,7 @@ describe('upgrade', function() {
 			var bundle = memorybundle();
 			bundle.addUpdateQuery("example", "1.0.0", "CREATE SCHEMA example");
 
-			database.query("INSERT INTO ver.version VALUES ('example', '1.0.0')", function(err) {
+			database.query("INSERT INTO versiondb.version VALUES ('example', '1.0.0')", function(err) {
 				should.not.exist(err);
 
 				var status = versiondb.upgrade(database, bundle);
@@ -567,7 +567,7 @@ describe('upgrade', function() {
 				});
 
 				status.once('complete', function() {
-					database.query("SELECT version FROM ver.version WHERE product = 'example'", function(err, result) {
+					database.query("SELECT version FROM versiondb.version WHERE product = 'example'", function(err, result) {
 						should.not.exist(err);
 
 						// Should be updated

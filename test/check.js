@@ -9,7 +9,7 @@ function connect(callback) {
 }
 
 function clear(database, callback) {
-	database.query("DROP SCHEMA ver CASCADE", function(err) {
+	database.query("DROP SCHEMA versiondb CASCADE", function(err) {
 		// We might get an error that it does not exist. That's fine.
 		return callback();
 	});
@@ -70,7 +70,7 @@ describe('check', function() {
 	it('identifies whether the version table exists', function(done) {
 		prep(function(err, database, dbclose) {
 			should.not.exist(err);
-			database.query('CREATE SCHEMA ver', function(err) {
+			database.query('CREATE SCHEMA versiondb', function(err) {
 				versiondb.check(database, function(err, data) {
 					should.not.exist(err);
 					should.exist(data);
@@ -104,10 +104,10 @@ describe('check', function() {
 		prepWithVersionTable(function(err, database, dbclose) {
 			should.not.exist(err);
 
-			database.query("INSERT INTO ver.version VALUES ('example', '1.0.1')", function(err) {
+			database.query("INSERT INTO versiondb.version VALUES ('example', '1.0.1')", function(err) {
 				should.not.exist(err);
 
-				database.query("INSERT INTO ver.version VALUES ('other', '2.0.0')", function(err) {
+				database.query("INSERT INTO versiondb.version VALUES ('other', '2.0.0')", function(err) {
 					should.not.exist(err);
 
 					versiondb.check(database, function(err, data) {

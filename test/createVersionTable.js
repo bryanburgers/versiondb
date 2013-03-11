@@ -9,7 +9,7 @@ function connect(callback) {
 }
 
 function clear(database, callback) {
-	database.query("DROP SCHEMA ver CASCADE", function(err) {
+	database.query("DROP SCHEMA versiondb CASCADE", function(err) {
 		// We might get an error that it does not exist. That's fine.
 		return callback();
 	});
@@ -45,7 +45,7 @@ describe('createVersionTable', function() {
 				data.should.have.property('schemaCreated', true);
 				data.should.have.property('tableCreated', true);
 
-				database.query('SELECT * FROM information_schema.tables WHERE table_schema = \'ver\' AND table_name = \'version\'', function(err, data) {
+				database.query('SELECT * FROM information_schema.tables WHERE table_schema = \'versiondb\' AND table_name = \'version\'', function(err, data) {
 
 					data.rowCount.should.eql(1);
 
@@ -60,7 +60,7 @@ describe('createVersionTable', function() {
 		prep(function(err, database, dbclose) {
 			should.not.exist(err);
 
-			database.query('CREATE SCHEMA ver', function(err, data) {
+			database.query('CREATE SCHEMA versiondb', function(err, data) {
 				should.not.exist(err);
 
 				versiondb.createVersionTable(database, function(err, data) {
@@ -70,7 +70,7 @@ describe('createVersionTable', function() {
 					data.should.have.property('schemaCreated', false);
 					data.should.have.property('tableCreated', true);
 
-					database.query('SELECT * FROM information_schema.tables WHERE table_schema = \'ver\' AND table_name = \'version\'', function(err, data) {
+					database.query('SELECT * FROM information_schema.tables WHERE table_schema = \'versiondb\' AND table_name = \'version\'', function(err, data) {
 
 						data.rowCount.should.eql(1);
 

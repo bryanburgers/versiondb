@@ -17,7 +17,7 @@ util.inherits(VersionDBUpgrader, EventEmitter);
 VersionDBUpgrader.prototype.getSchemaVersion = function(product, next) {
 	var self = this;
 
-	self.connection.query("SELECT version FROM ver.version WHERE product = $1", [product], function(err, result) {
+	self.connection.query("SELECT version FROM versiondb.version WHERE product = $1", [product], function(err, result) {
 		if (err) {
 			next(err);
 			return;
@@ -76,9 +76,9 @@ VersionDBUpgrader.prototype.runUpdate = function(product, version, create, next)
 					});
 				}
 				else {
-					var schemaQuery = "UPDATE ver.version SET version = $1 WHERE product = $2";
+					var schemaQuery = "UPDATE versiondb.version SET version = $1 WHERE product = $2";
 					if (create) {
-						schemaQuery = "INSERT INTO ver.version (product, version) VALUES ($2, $1)";
+						schemaQuery = "INSERT INTO versiondb.version (product, version) VALUES ($2, $1)";
 					}
 					self.connection.query(schemaQuery, [version, product], function(err, result) {
 						self.connection.query("COMMIT", function(err) {
