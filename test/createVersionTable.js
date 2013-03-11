@@ -16,24 +16,26 @@ function clear(database, callback) {
 }
 
 function prep(callback) {
-	connect(function(err, database) {
+	connect(function(err, database, dbclose) {
 		if (err) {
-			return callback(err);
+			dbclose();
+			return callback(err, null, function() {});
 		}
 
 		clear(database, function(err) {
 			if (err) {
-				return callback(err);
+				dbclose();
+				return callback(err, null, function() {});
 			}
 
-			return callback(null, database);
+			return callback(null, database, dbclose);
 		});
 	});
 }
 
 describe('createVersionTable', function() {
 	it('create a version table when no schema exists', function(done) {
-		prep(function(err, database) {
+		prep(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			versiondb.createVersionTable(database, function(err, data) {
@@ -47,6 +49,7 @@ describe('createVersionTable', function() {
 
 					data.rowCount.should.eql(1);
 
+					dbclose();
 					done();
 				});
 			});
@@ -54,7 +57,7 @@ describe('createVersionTable', function() {
 	});
 
 	it('create a version table when the schema already exists', function(done) {
-		prep(function(err, database) {
+		prep(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			database.query('CREATE SCHEMA ver', function(err, data) {
@@ -71,6 +74,7 @@ describe('createVersionTable', function() {
 
 						data.rowCount.should.eql(1);
 
+						dbclose();
 						done();
 					});
 				});
@@ -79,7 +83,7 @@ describe('createVersionTable', function() {
 	});
 
 	it('do nothing when the table already exists', function(done) {
-		prep(function(err, database) {
+		prep(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			versiondb.createVersionTable(database, function(err, data) {
@@ -90,6 +94,8 @@ describe('createVersionTable', function() {
 					should.exist(data);
 					data.should.have.property('schemaCreated', false);
 					data.should.have.property('tableCreated', false);
+
+					dbclose();
 					done();
 				});
 			});

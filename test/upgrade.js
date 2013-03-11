@@ -26,33 +26,37 @@ function clear(database, callback) {
 }
 
 function prep(callback) {
-	connect(function(err, database) {
+	connect(function(err, database, dbclose) {
 		if (err) {
-			return callback(err);
+			dbclose();
+			return callback(err, null, function() {});
 		}
 
 		clear(database, function(err) {
 			if (err) {
-				return callback(err);
+				dbclose();
+				return callback(err, null, function() {});
 			}
 
-			return callback(null, database);
+			return callback(null, database, dbclose);
 		});
 	});
 }
 
 function prepWithVersionTable(callback) {
-	prep(function(err, database) {
+	prep(function(err, database, dbclose) {
 		if (err) {
-			return callback(err);
+			dbclose();
+			return callback(err, null, function() {});
 		}
 
 		versiondb.createVersionTable(database, function(err, data) {
 			if (err) {
-				return callback(err);
+				dbclose();
+				return callback(err, null, function() {});
 			}
 
-			return callback(null, database);
+			return callback(null, database, dbclose);
 		});
 	});
 }
@@ -61,7 +65,7 @@ describe('upgrade', function() {
 	// Test event emitter output, as well.
 
 	it('upgrades successfully from nothing', function(done) {
-		prep(function(err, database) {
+		prep(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			var bundle = memorybundle();
@@ -110,6 +114,7 @@ describe('upgrade', function() {
 					products['example'].should.have.property('targetVersion', '1.0.0');
 					products['example'].should.have.property('success', true);
 
+					dbclose();
 					done();
 				});
 			});
@@ -117,7 +122,7 @@ describe('upgrade', function() {
 	});
 
 	it('upgrades a pre-existing version', function(done) {
-		prepWithVersionTable(function(err, database) {
+		prepWithVersionTable(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			var bundle = memorybundle();
@@ -181,6 +186,7 @@ describe('upgrade', function() {
 							database.query("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'other'", function(err, result) {
 								result.rowCount.should.eql(1);
 
+								dbclose();
 								done();
 							});
 						});
@@ -191,7 +197,7 @@ describe('upgrade', function() {
 	});
 
 	it('upgrades multiple products', function(done) {
-		prep(function(err, database) {
+		prep(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			var bundle = memorybundle();
@@ -258,6 +264,7 @@ describe('upgrade', function() {
 					result.rows[0].version.should.eql('1.0.0');
 					result.rows[1].version.should.eql('2.0.0');
 
+					dbclose();
 					done();
 				});
 			});
@@ -265,7 +272,7 @@ describe('upgrade', function() {
 	});
 
 	it('gracefully fails on the first version', function(done) {
-		prep(function(err, database) {
+		prep(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			var bundle = memorybundle();
@@ -318,6 +325,7 @@ describe('upgrade', function() {
 
 					result.rowCount.should.eql(0);
 
+					dbclose();
 					done();
 				});
 			});
@@ -325,7 +333,7 @@ describe('upgrade', function() {
 	});
 
 	it('gracefully fails on a later version', function(done) {
-		prep(function(err, database) {
+		prep(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			var bundle = memorybundle();
@@ -386,6 +394,7 @@ describe('upgrade', function() {
 
 						result.rowCount.should.eql(1);
 
+						dbclose();
 						done();
 					});
 				});
@@ -394,7 +403,7 @@ describe('upgrade', function() {
 	});
 
 	it('stops running on an upgrade failure', function(done) {
-		prep(function(err, database) {
+		prep(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			var bundle = memorybundle();
@@ -462,6 +471,7 @@ describe('upgrade', function() {
 
 							result.rowCount.should.eql(0);
 
+							dbclose();
 							done();
 						});
 					});
@@ -471,7 +481,7 @@ describe('upgrade', function() {
 	});
 
 	it('does nothing when versions can not be reconciled', function(done) {
-		prepWithVersionTable(function(err, database) {
+		prepWithVersionTable(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			var bundle = memorybundle();
@@ -521,6 +531,7 @@ describe('upgrade', function() {
 						database.query("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'example'", function(err, result) {
 							result.rowCount.should.eql(0);
 
+							dbclose();
 							done();
 						});
 					});
@@ -530,7 +541,7 @@ describe('upgrade', function() {
 	});
 
 	it('does nothing when already up to date', function(done) {
-		prepWithVersionTable(function(err, database) {
+		prepWithVersionTable(function(err, database, dbclose) {
 			should.not.exist(err);
 
 			var bundle = memorybundle();
@@ -580,6 +591,7 @@ describe('upgrade', function() {
 						database.query("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'example'", function(err, result) {
 							result.rowCount.should.eql(0);
 
+							dbclose();
 							done();
 						});
 					});

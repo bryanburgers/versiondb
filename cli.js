@@ -29,15 +29,17 @@ if (program.secure) {
 }
 
 if (!file) {
-	pg.connect(db, function(err, connection) {
+	pg.connect(db, function(err, connection, dbclose) {
 		if (err) {
 			console.error(err.message);
+			dbclose();
 			process.exit(1);
 		}
 
 		versiondb.check(connection, function(err, data) {
 			if (err) {
 				console.error(err.message);
+				dbclose();
 				process.exit(1);
 			}
 
@@ -56,6 +58,7 @@ if (!file) {
 				console.error("No products");
 			}
 
+			dbclose();
 			process.exit();
 		});
 	});
@@ -67,15 +70,17 @@ else {
 			process.exit(1);
 		}
 
-		pg.connect(db, function(err, connection) {
+		pg.connect(db, function(err, connection, dbclose) {
 			if (err) {
 				console.error(err.message);
+				dbclose();
 				process.exit(1);
 			}
 
 			var status = versiondb.upgrade(connection, bundle);
 			status.on('error', function(err) {
 				console.error(err.message);
+				dbclose();
 				process.exit(1);
 			});
 			status.on('plan', function(data) {
@@ -120,6 +125,7 @@ else {
 			});
 			status.on('complete', function() {
 				console.log("Done");
+				dbclose();
 				process.exit();
 			});
 		});
