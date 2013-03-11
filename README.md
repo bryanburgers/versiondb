@@ -2,6 +2,8 @@
 
 A command line utility and underlying library that allows for maintaining the schema version of a database.
 
+[![Build Status](https://secure.travis-ci.org/bryanburgers/versiondb.png)](http://travis-ci.org/bryanburgers/versiondb)
+
 ## How it works
 
 Version DB includes a single table in that target database that tracks which version of each product's database schema resides in the database. Every time it is run, it checks what version of a product's database schema is on the database, checks the schema file, and runs all of the scripts required to bring the database schema up to the latest version.
