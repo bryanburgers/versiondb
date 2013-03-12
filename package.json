@@ -27,9 +27,5 @@
   },
   "scripts": {
     "test": "node checkenv && node node_modules/mocha/bin/mocha"
-  },
-  "bin": {
-    "versiondb": "./cli.js"
-  },
-  "preferGlobal": true
+  }
 }

@@ -1,6 +1,6 @@
 # Version DB
 
-A command line utility and underlying library that allows for maintaining the schema version of a database.
+A library for maintaining the schema version of a database. For the corresponding command line utility, install [VersionDB CLI](http://github.com/bryanburgers/versiondb-cli).
 
 [![Build Status](https://secure.travis-ci.org/bryanburgers/versiondb.png)](http://travis-ci.org/bryanburgers/versiondb)
 
@@ -12,27 +12,25 @@ If a product does not exist in the database, all of the scripts will be run on t
 
 ## Installation
 
-    npm install -g versiondb
+    npm install versiondb
 
 ## Usage
 
 To check what schemas are currently installed on a database
 
-    versiondb pg://user@password:localhost/database
+    var versiondb = require('versiondb');
+    versiondb.check(connection, function(err, versions) {
+        // versions == { 'productname': '1.0.2', 'otherproduct': '2.0.0' }
+    });
 
 To run upgrade scripts
 
-    versiondb pg://user@password:localhost/database scripts.json
+    var versiondb = require('versiondb');
+    var status = versiondb.upgrade(connection, bundle);
+    status.on('complete', function(err) {
+        // done
+    });
 
-## JSON format
+## Bundles
 
-    {
-    	"productname": {
-    		"1.0.0": "createscript.sql",
-    		"1.0.1": "upgradescript-1.0.1.sql",
-    		"1.0.2": "fix-table.sql"
-    	},
-    	"otherproduct": {
-    		"2.0.0": "createother.sql"
-    	}
-    }
+Upgrading the database requires passing in a bundle. You must either pass in a bundle returned by [versiondb-bundle-file](https://github.com/bryanburgers/versiondb-bundle-file),  [versiondb-bundle-memory](https://github.com/bryanburgers/versiondb-bundle-memory), or an object that conforms to the bundle interface.
