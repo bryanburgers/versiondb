@@ -1,8 +1,15 @@
 language: node_js
+sudo: false
+
 node_js:
-  - "0.10"
-  - "0.8"
+  - "4"
+  - "6"
+
+services:
+  - postgresql
+
 before_script:
   - psql -c 'create database versiondb;' -U postgres
+
 env:
   - DATABASE_URL="postgres://postgres@localhost/versiondb"
