@@ -1,31 +1,31 @@
 {
   "name": "versiondb",
-  "description": "Tool to version database schemas",
-  "author": "Bryan Burgers <bryan.burgers@gmail.com>",
-  "version": "1.0.0",
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/bryanburgers/versiondb.git"
+  "description": "A tool to version database schemas, upgrades, and migrations",
+  "author": "Bryan Burgers <bryan@burgers.io>",
+  "version": "2.0.0",
+  "repository": "bryanburgers/versiondb",
+  "main": "index.js",
+  "scripts": {
+    "test": "node checkenv && mocha test && eslint .",
+    "coverage": "istanbul cover _mocha test"
+  },
+  "license": "MIT",
+  "bin": {
+    "versiondb": "./versiondb"
   },
   "dependencies": {
-    "async": "~0.1",
-    "commander": "~1.1",
-    "pg": "~0.13",
-    "semver": "~1.1",
-    "versiondb-bundle-file": "~1.0"
+    "chalk": "^1.1.3",
+    "columnify": "^1.5.4",
+    "joi": "^10.0.5",
+    "js-yaml": "^3.7.0",
+    "ora": "^0.3.0",
+    "pg": "^6.1.2"
   },
   "devDependencies": {
-    "grunt": "~0.4",
-    "grunt-contrib-jshint": "~0.1.1",
-    "mocha": "~1.7",
-    "should": "~1.2",
-    "versiondb-bundle-memory": "~1.0"
-  },
-  "engines": {
-    "node": "~0.8",
-    "npm": "~1.1"
-  },
-  "scripts": {
-    "test": "node checkenv && node node_modules/mocha/bin/mocha"
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "eslint": "^3.12.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0"
   }
 }

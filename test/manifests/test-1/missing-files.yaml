@@ -1,0 +1,15 @@
+product: test-1
+
+versions:
+  19850421:
+    - name: First existing file
+      script: 19850421/number-1.sql
+    - name: First missing file
+      script: missing-file-1.sql
+    - name: Second missing file
+      script: missing-file-2.sql
+  20120106:
+    - name: First thing
+      script: 20120106/first-thing.sql
+    - name: Another missing file
+      script: missing-file-3.sql

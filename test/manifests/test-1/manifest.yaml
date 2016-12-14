@@ -1,0 +1,13 @@
+product: test-1
+
+versions:
+  19850421:
+    - name: Number 1
+      script: 19850421/number-1.sql
+    - name: Number 2
+      script: 19850421/number-2.sql
+  20120106:
+    - name: First thing
+      script: 20120106/first-thing.sql
+    - name: Second thing
+      script: 20120106/second-thing.sql

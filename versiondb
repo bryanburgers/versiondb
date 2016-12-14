@@ -1,0 +1,118 @@
+#! /usr/bin/env node
+
+/* eslint "no-process-exit":off, "no-process-env":off */
+
+'use strict';
+
+const pkg = require('./package.json');
+const commander = require('commander');
+
+let commandRecognized = false;
+
+commander.version(pkg.version)
+    .description(pkg.description);
+
+commander.command('run <filename>')
+    .description('Run a schema upgrade')
+    .option('-h, --host <host>', 'The host of the databsae')
+    .option('-p, --port <port>', 'The port to use to connect to the database', parseInt)
+    .option('-U, --username <username>', 'The database user')
+    .option('-d, --database <database>', 'The database name')
+    .action((filename, options) => {
+        commandRecognized = true;
+        const databaseOptions = parseDatabaseOptions(process.env, options);
+        require('./commands/run')(filename, databaseOptions);
+    });
+
+commander.command('ls')
+    .description('List the product schemas that are already installed in the database')
+    .option('-h, --host <host>', 'The host of the databsae')
+    .option('-p, --port <port>', 'The port to use to connect to the database', parseInt)
+    .option('-U, --username <username>', 'The database user')
+    .option('-d, --database <database>', 'The database name')
+    .action((options) => {
+        commandRecognized = true;
+        const databaseOptions = parseDatabaseOptions(process.env, options);
+        require('./commands/ls')(databaseOptions);
+    });
+
+commander.command('validate <filename>')
+    .description('Validate that a product manifest is valid')
+    .action((filename) => {
+        commandRecognized = true;
+        require('./commands/validate')(filename);
+    });
+
+commander.command('describe <filename>')
+    .description('Describe the products of a product manifest')
+    .action((filename) => {
+        commandRecognized = true;
+        require('./commands/describe')(filename);
+    });
+
+commander.parse(process.argv);
+
+if (!commandRecognized) {
+    commander.outputHelp();
+}
+
+function parseDatabaseOptions(env, options) {
+    return {
+        host: env.DATABASE_HOST || options.host || 'localhost',
+        port: env.DATABASE_PORT || options.port || '5432',
+        username: env.DATABASE_USERNAME || options.username,
+        database: env.DATABASE_NAME || options.database,
+    };
+}
+
+//
+// # Help
+// $ wilbur help
+//
+// # List all of the products in the database
+// $ wilbur ls
+// Product    Version
+// docutap    20161207
+//
+// $ wilbur validate sql/docutap.yaml
+// :thumbsup:
+//
+// # Update
+// $ wilbur run sql/docutap.yaml
+// Validating... done
+// Checking versions... docutap is at version 20161202, sql/docutap.yaml is at version 20161208
+// Will run versions... 20161203, 20161205, 20161208
+// Running version 20161203
+//   Running: Add tables... done
+//   Running: Add users... done
+//   Running: Whatever... done
+//   Updating database... done
+// Running version 20161205
+//   Running: Add tables... done
+//   Running: Add users... error
+//   Rolling back...
+// Stopped at 20161205.
+// Error in Add Users
+// [error message]
+//
+// $ wilbur run sql/docutap.yaml
+// Validating... done
+// Checking versions... docutap is at version 20161202, sql/docutap.yaml is at version 20161208
+// Will run versions... 20161203, 20161205, 20161208
+// Running version 20161203
+//   Running: Add tables... done
+//   Running: Add users... done
+//   Running: Whatever... done
+//   Updating database... done
+// Running version 20161205
+//   Running: Add tables... done
+//   Updating database... done
+// Running version 20161208
+//   Running: Add tables... done
+//   Updating database... done
+// Done.
+//
+// $ wilbur run sql/docutap.yaml
+// Validating... done
+// Checking versions... docutap is at version 20161208, sql/docutap.yaml is at version 20161208
+// Up to date. Nothing to do.
