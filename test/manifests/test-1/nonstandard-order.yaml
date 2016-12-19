@@ -1,7 +1,7 @@
-product: test-1
+product: nonstandard-order
 
 versions:
-  - version: "19850421"
+  - version: baseline
     tasks:
       - name: Number 1
         script: 19850421/number-1.sql

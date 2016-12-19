@@ -110,5 +110,17 @@ describe('manifest', function() {
 
             return assert.isRejected(result, /Invalid/i);
         });
+
+        it('returns the order specified in the YAML file', function() {
+            const result = manifest.readFromFile(path.resolve(__dirname, './manifests/test-1/nonstandard-order.yaml'));
+
+            return assert.isFulfilled(result)
+                .then((result) => {
+                    assert.isArray(result.versions);
+                    assert.lengthOf(result.versions, 2);
+                    assert.equal(result.versions[0].name, 'baseline', 'First version');
+                    assert.equal(result.versions[1].name, '20120106', 'Second version');
+                });
+        });
     });
 });

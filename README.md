@@ -39,19 +39,21 @@ Schema files are written in YAML.
 product: my-product
 
 versions:
-  1.0:
-    - name: Create tables
-      script: 1.0/tables.sql
-    - name: Create functions
-      script: 1.0/functions.sql
-    - name: Create users
-      script: 1.0/users.sql
+  - version: "1.0"
+    tasks:
+      - name: Create tables
+        script: 1.0/tables.sql
+      - name: Create functions
+        script: 1.0/functions.sql
+      - name: Create users
+        script: 1.0/users.sql
 
-  1.1:
-    - name: Tables and functions that support the new wizbang feature
-      script: 1.1/wizbang.sql
-    - name: Tables and functions that support the new foobar feature
-      script: 1.1/foobar.sql
+  - version: "1.1"
+    tasks:
+      - name: Tables and functions that support the new wizbang feature
+        script: 1.1/wizbang.sql
+      - name: Tables and functions that support the new foobar feature
+        script: 1.1/foobar.sql
 ```
 
 The scripts are referenced relative the schema file. Versions are considered
