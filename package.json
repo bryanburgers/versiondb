@@ -2,7 +2,7 @@
   "name": "versiondb",
   "description": "A tool to version database schemas, upgrades, and migrations",
   "author": "Bryan Burgers <bryan@burgers.io>",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "repository": "bryanburgers/versiondb",
   "main": "index.js",
   "scripts": {
